@@ -1,111 +1,354 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Fotos por Código</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; background-color: #f4f7f6; margin: 0; padding: 50px 20px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: left; }
-        h1 { color: #333; text-align: center; margin-top: 0; }
-        p.sub { text-align: center; color: #666; }
-        .busca-box { display: flex; gap: 10px; margin-top: 20px; justify-content: center; }
-        input { padding: 12px; width: 70%; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
-        button { padding: 12px 24px; font-size: 16px; background-color: #27ae60; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: #219653; }
-        #resultado { margin-top: 30px; }
-        
-        /* Estilização da nova Lista de Resultados */
-        .contador { font-weight: bold; color: #2c3e50; margin-bottom: 15px; font-size: 16px; }
-        .lista-fotos { list-style: none; padding: 0; margin: 0; }
-        .lista-fotos li { margin-bottom: 10px; }
-        .lista-fotos a { 
-            display: block; 
-            padding: 14px; 
-            background: #f8f9fa; 
-            color: #2980b9; 
-            text-decoration: none; 
-            border-radius: 6px; 
-            border-left: 4px solid #2980b9;
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-        .lista-fotos a:hover { 
-            background: #ebf5fb; 
-            color: #2471a3; 
-            transform: translateX(5px);
-        }
-        
-        .erro { color: #e74c3c; font-weight: bold; text-align: center; }
-        .carregando { color: #7f8c8d; font-style: italic; text-align: center; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buscador de Fotos por Código</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    background:#f4f7f6;
+    margin:0;
+    padding:40px 20px;
+}
+
+/* Layout */
+.container{
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    gap:25px;
+    align-items:flex-start;
+}
+
+.main-content{
+    flex:3;
+    background:#fff;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+}
+
+.sidebar{
+    flex:1;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 4px 15px rgba(0,0,0,.1);
+    position:sticky;
+    top:20px;
+}
+
+.sidebar h2{
+    margin-top:0;
+    color:#2c3e50;
+    border-bottom:2px solid #27ae60;
+    padding-bottom:8px;
+}
+
+.sidebar h3{
+    color:#27ae60;
+    margin-top:25px;
+}
+
+.sidebar p{
+    color:#555;
+    line-height:1.6;
+}
+
+.sidebar ul{
+    padding-left:20px;
+}
+
+.sidebar li{
+    margin-bottom:8px;
+    font-weight:500;
+}
+
+h1{
+    color:#333;
+    text-align:center;
+    margin-top:0;
+}
+
+.sub{
+    text-align:center;
+    color:#666;
+}
+
+.busca-box{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    justify-content:center;
+}
+
+input{
+    padding:12px;
+    width:70%;
+    font-size:16px;
+    border:1px solid #ccc;
+    border-radius:5px;
+    outline:none;
+}
+
+button{
+    padding:12px 24px;
+    font-size:16px;
+    background:#27ae60;
+    color:#fff;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#219653;
+}
+
+#resultado{
+    margin-top:30px;
+}
+
+.contador{
+    font-weight:bold;
+    color:#2c3e50;
+    margin-bottom:15px;
+    font-size:16px;
+}
+
+.lista-fotos{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.lista-fotos li{
+    margin-bottom:10px;
+}
+
+.lista-fotos a{
+    display:block;
+    padding:14px;
+    background:#f8f9fa;
+    color:#2980b9;
+    text-decoration:none;
+    border-radius:6px;
+    border-left:4px solid #2980b9;
+    transition:.2s;
+    font-weight:500;
+}
+
+.lista-fotos a:hover{
+    background:#ebf5fb;
+    transform:translateX(5px);
+}
+
+.erro{
+    color:#e74c3c;
+    font-weight:bold;
+    text-align:center;
+}
+
+.carregando{
+    color:#7f8c8d;
+    font-style:italic;
+    text-align:center;
+}
+
+/* Responsivo */
+
+@media(max-width:900px){
+
+.container{
+    flex-direction:column;
+}
+
+.sidebar{
+    position:static;
+    width:100%;
+}
+
+.main-content{
+    width:100%;
+}
+
+input{
+    width:100%;
+}
+
+.busca-box{
+    flex-direction:column;
+}
+
+button{
+    width:100%;
+}
+
+}
+</style>
+
 </head>
 <body>
 
 <div class="container">
-    <h1>Buscar Fotos</h1>
-    <p class="sub">Insira o código para listar as imagens disponíveis.</p>
-    
-    <div class="busca-box">
-        <input type="text" id="codigoInput" placeholder="Ex: COD123" onkeypress="if(event.key === 'Enter') buscarFotos()">
-        <button onclick="buscarFotos()">Buscar</button>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content">
+
+        <h1>Buscar Fotos</h1>
+
+        <p class="sub">
+            Digite o código do produto para localizar todas as fotos disponíveis.
+        </p>
+
+        <div class="busca-box">
+            <input
+                type="text"
+                id="codigoInput"
+                placeholder="Ex: COD123"
+                onkeypress="if(event.key === 'Enter') buscarFotos()">
+
+            <button onclick="buscarFotos()">
+                Buscar
+            </button>
+        </div>
+
+        <div id="resultado"></div>
+
     </div>
 
-    <div id="resultado"></div>
+    <!-- Barra lateral -->
+
+    <aside class="sidebar">
+
+        <h2>📌 Informações</h2>
+
+        <p>
+            Algumas marcas possuem fotos de todos os produtos.
+            Caso sua pesquisa não encontre imagens, verifique se a marca
+            já está contemplada na lista abaixo.
+        </p>
+
+        <h3>Marcas com todas as fotos</h3>
+
+        <ul>
+
+            <li>Holyfoods</li>
+
+            <!--
+            Basta adicionar novas marcas abaixo.
+            Exemplo:
+
+            <li>Vitafor</li>
+            <li>Growth</li>
+            <li>Essential Nutrition</li>
+            <li>Max Titanium</li>
+            -->
+
+        </ul>
+
+    </aside>
+
 </div>
 
 <script>
-    function buscarFotos() {
-        var codigo = document.getElementById('codigoInput').value.trim();
-        var resultadoDiv = document.getElementById('resultado');
-        
-        if (!codigo) {
-            resultadoDiv.innerHTML = "<p class='erro'>Por favor, digite um código antes de buscar.</p>";
+
+function buscarFotos(){
+
+    var codigo = document.getElementById("codigoInput").value.trim();
+    var resultadoDiv = document.getElementById("resultado");
+
+    if(!codigo){
+
+        resultadoDiv.innerHTML =
+        "<p class='erro'>Por favor, digite um código antes de buscar.</p>";
+
+        return;
+    }
+
+    resultadoDiv.innerHTML =
+    "<p class='carregando'>Buscando imagens na pasta...</p>";
+
+    // SUA URL DO APPS SCRIPT
+
+    var urlScript =
+    "https://script.google.com/macros/s/AKfycbxPbwVsht3CNQ75xwLeb4atzaNPHYMUDfXs9uCm0gpeH4JZAT2toGzjxpLR6SpqDx4b7g/exec?codigo="
+    + encodeURIComponent(codigo);
+
+    fetch(urlScript)
+
+    .then(response => response.json())
+
+    .then(data=>{
+
+        if(data.error){
+
+            resultadoDiv.innerHTML =
+            "<p class='erro'>" + data.error + "</p>";
+
             return;
         }
 
-        resultadoDiv.innerHTML = "<p class='carregando'>Buscando imagens na pasta...</p>";
+        var totalFotos = data.fotos.length;
 
-        // LEMBRETE: Substitua pela sua URL gerada no Passo 1 (com /exec no final)
-        var urlScript = "https://script.google.com/macros/s/AKfycbxPbwVsht3CNQ75xwLeb4atzaNPHYMUDfXs9uCm0gpeH4JZAT2toGzjxpLR6SpqDx4b7g/exec?codigo=" + encodeURIComponent(codigo);
+        if(totalFotos===0){
 
-        fetch(urlScript)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    resultadoDiv.innerHTML = "<p class='erro'>" + data.error + "</p>";
-                    return;
-                }
+            resultadoDiv.innerHTML =
+            "<p class='erro'>Não foi encontrada nenhuma foto do item <strong>" +
+            codigo +
+            "</strong>.<br><br>Avise ao Glauber, por favor.</p>";
 
-                var totalFotos = data.fotos.length;
+        }else{
 
-                if (totalFotos === 0) {
-                    resultadoDiv.innerHTML = "<p class='erro'>Nenhuma foto foi encontrada com o início \"" + codigo + "\".</p>";
-                } else {
-                    // Começa a construir a lista
-                    var html = `<div class="contador">Foram encontradas ${totalFotos} imagem(ns):</div>`;
-                    html += '<ul class="lista-fotos">';
-                    
-                    // Roda um loop para criar um item na lista para cada foto encontrada
-                    data.fotos.forEach(function(foto) {
-                        html += `
-                            <li>
-                                <a href="${foto.url}" target="_blank" title="Clique para abrir em nova guia">
-                                    📄 ${foto.name} <span style="float: right; font-size: 12px; color: #aaa;">Abrir ↗</span>
-                                </a>
-                            </li>
-                        `;
-                    });
-                    
-                    html += '</ul>';
-                    resultadoDiv.innerHTML = html;
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
-                resultadoDiv.innerHTML = "<p class='erro'>Ocorreu um erro ao conectar com o servidor.</p>";
+            var html =
+            "<div class='contador'>Foram encontradas " +
+            totalFotos +
+            " imagem(ns):</div>";
+
+            html += "<ul class='lista-fotos'>";
+
+            data.fotos.forEach(function(foto){
+
+                html += `
+                <li>
+                    <a href="${foto.url}" target="_blank">
+                        📄 ${foto.name}
+                        <span style="float:right;color:#aaa;font-size:12px">
+                            Abrir ↗
+                        </span>
+                    </a>
+                </li>
+                `;
+
             });
-    }
+
+            html += "</ul>";
+
+            resultadoDiv.innerHTML = html;
+
+        }
+
+    })
+
+    .catch(error=>{
+
+        console.error(error);
+
+        resultadoDiv.innerHTML =
+        "<p class='erro'>Ocorreu um erro ao conectar com o servidor.</p>";
+
+    });
+
+}
+
 </script>
+
 </body>
 </html>
